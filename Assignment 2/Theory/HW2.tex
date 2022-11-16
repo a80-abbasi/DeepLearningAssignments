@@ -256,18 +256,19 @@ And during training, we are minimizing \(J_D\).
 \EX\bigl[\nabla_{w_i} J_D\bigr] &= -2(y\EX[\delta_i]x_i - \EX[\delta_i^2] x_i^2 w_i - \sum_{k\neq i} \EX[\delta_k \delta_i] w_k x_k x_i) \\
 \EX[\delta_i] &= 1\\
 \EX[\delta_i^2] &= \EX[\delta_i]^2 + var(\delta_i) = 1 + \sigma^2\\
-\EX[\delta_k \delta_i] &= \EX[\delta_k] \EX[\delta_i] = 1 & \textup{for \(i\neq j\)}\\
+\EX[\delta_k \delta_i] &= \EX[\delta_k] \EX[\delta_i] = 1 & \textup{for \(i\neq k\)}\\
 \implies \EX\bigl[\nabla_{w_i} J_D\bigr] &= -2(yx_i - (1 + \sigma^2) x_i^2 w_i - \sum_{k\neq i} w_k x_k x_i) \\
 &= -2(yx_i - \sigma^2 x_i^2 w_i - \sum_{k=1}^n w_k x_k x_i) \\
 &= -2(y - \sum_{k=1}^n w_k x_k) x_i + 2\sigma^2 x_i^2 w_i\\
 \nabla_{w_i} J_N &= \nabla_{w_i} (y - \sum_{k=1}^n w_k x_k)^2\\
+&= -2(y - \sum_{k=1}^n w_k x_k) x_i\\
 \implies \EX\bigl[\nabla_{w_i} J_N\bigr] &= \nabla_{w_i} J_N + 2\sigma^2 x_i^2 w_i
 \end{align}
 
 \subsection{}
 Note how the term added to the gradient of normal loss function resembles ordinary weight decay regularization!
 It's like \(\nabla_{w_i}\sigma^2\sum_i x_i^2 w_i^2\) is added to the gradient of normal loss function.
-Which is like a version of L2 regularization where \(\lambda = \sigma^2\) and each \(w_i\) is punished differently proportional to the square of its corresponding element in data, \(x_i^2\).
+Which is like a variant of L2 regularization where \(\lambda = \sigma^2\) and each \(w_i\) is punished differently proportional to the square of its corresponding element in data, \(x_i^2\).
 
 \section{Problem 5}
 We want to minimize \(w\transpose H w\) and we know \(H=Q\Lambda Q\transpose\).
