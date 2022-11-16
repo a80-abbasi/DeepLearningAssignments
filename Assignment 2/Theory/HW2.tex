@@ -328,18 +328,20 @@ Considering that we have a batch of \(B\) pairs (to not be confused with bias) o
 h_1^{(i)} = \tanh(Wx_1^{(i)} + b)\\
 h_2^{(i)} = \tanh(Wx_2^{(i)} + b)\\
 J^{(i)} = \norm{h_1^{(i)} - h_2^{(i)}}^2\\
-\tag*{(\textup{we'll add regularization to the whole cost function})}\\
-\nabla_W J^{(i)} = 2(h_1^{(i)} - h_2^{(i)})((1 - h_1^{(i)}\odot h_1^{(i)}){x_1^{(i)}}\transpose + (1 - h_2^{(i)}\odot h_2^{(i)}){x_2^{(i)}}\transpose)\\ 
-\nabla_b J^{(i)} = 2(h_1^{(i)} - h_2^{(i)})((1 - h_1^{(i)}\odot h_1^{(i)}) + (1 - h_2^{(i)}\odot h_2^{(i)}))
+\tag{\textup{we'll add regularization to the whole cost function}}\\
+\nabla_W J^{(i)} = 2\biggl[(h_1^{(i)} - h_2^{(i)}) \odot (\mathbf{1} - h_1^{(i)} \odot h_1^{(i)})\biggr] {x_1^{(i)}}\transpose - 2\biggl[(h_1^{(i)} - h_2^{(i)}) \odot (\mathbf{1} - h_2^{(i)} \odot h_2^{(i)})\biggr] {x_2^{(i)}}\transpose\\
+\nabla_b J^{(i)} = 2\biggl[(h_1^{(i)} - h_2^{(i)}) \odot (\mathbf{1} - h_1^{(i)} \odot h_1^{(i)})\biggr] - 2\biggl[(h_1^{(i)} - h_2^{(i)}) \odot (\mathbf{1} - h_2^{(i)} \odot h_2^{(i)})\biggr]\\
+\xrightarrow{\textup{Simplify}} \nabla_b J^{(i)} = 2(h_1^{(i)} - h_2^{(i)}) \odot (h_2^{(i)} \odot h_2^{(i)} - h_1^{(i)} \odot h_1^{(i)})
 \end{gather}
-Where we have used the fact that \(\tanh'(z) = 1 - \tanh^2(z)\) and \(\odot\) is element wise multiplication (as we know \(\tanh\) activation is applied elementwise).
+Where \(\odot\) is element wise multiplication and \(\mathbf{1}\) is a vector of ones with similar size as \(h_1^{(i)}\) and \(h_2^{(i)}\).
+And we have used the fact that \(\tanh'(z) = 1 - \tanh^2(z)\) (as we know \(\tanh\) activation is applied element wise).
 
 So the total loss is:
 \begin{align}
 J &= \norm[F]{W}^2 + \sum_{i}^B J^{(i)}\\
 \nabla J &= \nabla \norm[F]{W}^2 + \sum_{i=1}^B \nabla J^{(i)}\\
-\implies \nabla_W J &= 2W + \sum_{i=1}^B 2(h_1^{(i)} - h_2^{(i)})((1 - h_1^{(i)}\odot h_1^{(i)}){x_1^{(i)}}\transpose + (1 - h_2^{(i)}\odot h_2^{(i)}){x_2^{(i)}}\transpose)\\
-\nabla_b J &= \sum_{i=1}^B 2(h_1^{(i)} - h_2^{(i)})((1 - h_1^{(i)}\odot h_1^{(i)}) + (1 - h_2^{(i)}\odot h_2^{(i)}))
+\implies \nabla_W J &= 2W + 2 \sum_{i=1}^B \biggl[(h_1^{(i)} - h_2^{(i)}) \odot (\mathbf{1} - h_1^{(i)} \odot h_1^{(i)})\biggr] {x_1^{(i)}}\transpose - \biggl[(h_1^{(i)} - h_2^{(i)}) \odot (\mathbf{1} - h_2^{(i)} \odot h_2^{(i)})\biggr] {x_2^{(i)}}\transpose\\
+\nabla_b J &= 2 \sum_{i=1}^B (h_1^{(i)} - h_2^{(i)}) \odot (h_2^{(i)} \odot h_2^{(i)} - h_1^{(i)} \odot h_1^{(i)})
 \end{align}
 So we can update the parameters using gradient descent as:
 \begin{align}
